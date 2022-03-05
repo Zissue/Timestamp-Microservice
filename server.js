@@ -39,7 +39,7 @@ app.get("/api", (req, res) => {
   let unixMs = dateObj.getTime();
   let utcDate = dateObj.toUTCString();
 
-  res.json({unix: unixMs, utc: utcDate});
+  res.json({ unix: unixMs, utc: utcDate });
   
 });
 
@@ -48,40 +48,22 @@ app.get("/api", (req, res) => {
 app.get("/api/:date?", (req, res) => {
 
   let dateStr = req.params.date;
-
   let dateObj;
-  let responseObj = {};
 
-  // Date string
-  if (dateStr.includes('-')) {
-
-    dateObj = new Date(dateStr);
-    
-  }
+  // Date string or invalid date
+  if (isNaN(dateStr)) dateObj = new Date(dateStr);
   // Unix timestamp
   else {
-
     let timestamp = parseInt(dateStr);
     dateObj = new Date(timestamp);
-
   }
-
-  // dateObj.setHours(dateObj.getHours() + 1);
+  
+  if (dateObj.toString() == 'Invalid Date') 
+    return res.json({ error: "Invalid Date" });
   
   let unixMs = dateObj.getTime();
-  responseObj['unix'] = unixMs;
-  
   let utcTime = dateObj.toUTCString(); 
-  responseObj['utc'] = utcTime;
 
-  // console.log(utcTime);
-
-  if (dateObj == "Invalid Date") res.json({error: "Invalid Date"});
-
-  else res.json(responseObj);
+  res.json({ unix: unixMs, utc: utcTime });
   
 });
-
-
-
-
